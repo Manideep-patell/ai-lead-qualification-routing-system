@@ -1,0 +1,1411 @@
+{
+  "name": "AI Lead Qualification & Routing System",
+  "nodes": [
+    {
+      "parameters": {
+        "content": "📢 ACTIONS\n\n• Store leads in Airtable\n• Notify the sales team\n• Prioritize outreach"
+      },
+      "type": "n8n-nodes-base.stickyNote",
+      "position": [
+        1952,
+        -192
+      ],
+      "typeVersion": 1,
+      "id": "2fb82cc8-1212-43dd-8845-a9c1132b4bd1",
+      "name": "Sticky Note4"
+    },
+    {
+      "parameters": {
+        "content": "⚡ INTELLIGENT ROUTING\n\nHot: score ≥ 70\n\nWarm: score ≥ 40\n\nDisqualified: score < 40",
+        "height": 192
+      },
+      "type": "n8n-nodes-base.stickyNote",
+      "position": [
+        1584,
+        -64
+      ],
+      "typeVersion": 1,
+      "id": "8373af1c-aa68-4da2-85c8-80c9f678d23f",
+      "name": "Sticky Note3"
+    },
+    {
+      "parameters": {
+        "content": "🤖 AI LEAD QUALIFICATION\n\n• Enrich lead information\n• Identify intent\n• Estimate budget\n• Generate lead score\n• Recommend next action",
+        "height": 192
+      },
+      "type": "n8n-nodes-base.stickyNote",
+      "position": [
+        1168,
+        -64
+      ],
+      "typeVersion": 1,
+      "id": "1b121385-30ab-44d0-b66c-ab8434042e17",
+      "name": "Sticky Note2"
+    },
+    {
+      "parameters": {
+        "content": "🔍 DEDUPLICATION\n\n• Search Airtable\n• Check existing leads\n• Prevent duplicate entries"
+      },
+      "type": "n8n-nodes-base.stickyNote",
+      "position": [
+        480,
+        -32
+      ],
+      "typeVersion": 1,
+      "id": "3117ec23-8f68-4cde-ae31-6ae84d1cc0a1",
+      "name": "Sticky Note1"
+    },
+    {
+      "parameters": {
+        "content": "🚀 LEAD INTAKE\n\n• Receive website form submission\n• Extract fields\n• Normalize incoming data"
+      },
+      "type": "n8n-nodes-base.stickyNote",
+      "position": [
+        32,
+        -32
+      ],
+      "typeVersion": 1,
+      "id": "ca9827f5-4d72-493a-ba19-d6cbc9acd8af",
+      "name": "Sticky Note"
+    },
+    {
+      "parameters": {
+        "authentication": "oAuth2",
+        "select": "channel",
+        "channelId": {
+          "__rl": true,
+          "value": "C0BM2AJ51QV",
+          "mode": "list",
+          "cachedResultName": "sales-alert"
+        },
+        "text": "=🟡 NEW WARM LEAD  \nName: {{ $('Edit Fields').item.json.name }}  \nCompany: {{ $('Edit Fields').item.json.company }}  \nLead score: {{ $('Basic LLM Chain').item.json.output.lead_score }}  \nIntent: {{ $('Basic LLM Chain').item.json.output.intent_level }}",
+        "otherOptions": {
+          "includeLinkToWorkflow": false
+        }
+      },
+      "type": "n8n-nodes-base.slack",
+      "typeVersion": 2.5,
+      "position": [
+        2816,
+        160
+      ],
+      "id": "b7b4bee4-e3fd-4ce5-bffb-98bd549b1220",
+      "name": "Slack Alert – Warm Lead",
+      "webhookId": "63be3f5c-06c9-4775-99d0-9390e5977a1a",
+      "credentials": {
+        "slackOAuth2Api": {
+          "id": "W4xXu5yIRihN31M2",
+          "name": "Slack account"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "authentication": "airtableOAuth2Api",
+        "operation": "create",
+        "base": {
+          "__rl": true,
+          "value": "appyQAMCOmSIG0SpB",
+          "mode": "list",
+          "cachedResultName": "Northlane Lead Database",
+          "cachedResultUrl": "https://airtable.com/appyQAMCOmSIG0SpB"
+        },
+        "table": {
+          "__rl": true,
+          "value": "tbljxObvdeSo971cK",
+          "mode": "list",
+          "cachedResultName": "Leads",
+          "cachedResultUrl": "https://airtable.com/appyQAMCOmSIG0SpB/tbljxObvdeSo971cK"
+        },
+        "columns": {
+          "mappingMode": "defineBelow",
+          "value": {
+            "Duplicate": "={{ false }}",
+            "Name": "={{ $('Edit Fields').item.json.name }}",
+            "Email": "={{ $('Edit Fields').item.json.email }}",
+            "Company": "={{ $('Edit Fields').item.json.company }}",
+            "Message": "={{ $('Edit Fields').item.json.message }}",
+            "Source": "={{ $('Edit Fields').item.json.source }}",
+            "Lead Score": "={{\n\"Industry: \" + $json.output.industry_guess +\n\"\\nIntent: \" + $json.output.intent_level +\n\"\\nBudget: \" + $json.output.budget_signal +\n\"\\nNext step: \" + $json.output.suggested_next_step\n}}",
+            "Status": "Disqualified",
+            "AI Reasoning": "={{ $json.output.qualification_reasoning }}"
+          },
+          "matchingColumns": [],
+          "schema": [
+            {
+              "id": "Name",
+              "displayName": "Name",
+              "required": false,
+              "defaultMatch": false,
+              "canBeUsedToMatch": true,
+              "display": true,
+              "type": "string",
+              "readOnly": false,
+              "removed": false
+            },
+            {
+              "id": "Email",
+              "displayName": "Email",
+              "required": false,
+              "defaultMatch": false,
+              "canBeUsedToMatch": true,
+              "display": true,
+              "type": "string",
+              "readOnly": false,
+              "removed": false
+            },
+            {
+              "id": "Company",
+              "displayName": "Company",
+              "required": false,
+              "defaultMatch": false,
+              "canBeUsedToMatch": true,
+              "display": true,
+              "type": "string",
+              "readOnly": false,
+              "removed": false
+            },
+            {
+              "id": "Message",
+              "displayName": "Message",
+              "required": false,
+              "defaultMatch": false,
+              "canBeUsedToMatch": true,
+              "display": true,
+              "type": "string",
+              "readOnly": false,
+              "removed": false
+            },
+            {
+              "id": "Source",
+              "displayName": "Source",
+              "required": false,
+              "defaultMatch": false,
+              "canBeUsedToMatch": true,
+              "display": true,
+              "type": "string",
+              "readOnly": false,
+              "removed": false
+            },
+            {
+              "id": "Lead Score",
+              "displayName": "Lead Score",
+              "required": false,
+              "defaultMatch": false,
+              "canBeUsedToMatch": true,
+              "display": true,
+              "type": "number",
+              "readOnly": false,
+              "removed": false
+            },
+            {
+              "id": "Status",
+              "displayName": "Status",
+              "required": false,
+              "defaultMatch": false,
+              "canBeUsedToMatch": true,
+              "display": true,
+              "type": "options",
+              "options": [
+                {
+                  "name": "Hot ",
+                  "value": "Hot "
+                },
+                {
+                  "name": "Warm",
+                  "value": "Warm"
+                },
+                {
+                  "name": "Disqualified",
+                  "value": "Disqualified"
+                },
+                {
+                  "name": "Manual Review",
+                  "value": "Manual Review"
+                }
+              ],
+              "readOnly": false,
+              "removed": false
+            },
+            {
+              "id": "AI Reasoning",
+              "displayName": "AI Reasoning",
+              "required": false,
+              "defaultMatch": false,
+              "canBeUsedToMatch": true,
+              "display": true,
+              "type": "string",
+              "readOnly": false,
+              "removed": false
+            },
+            {
+              "id": "Duplicate",
+              "displayName": "Duplicate",
+              "required": false,
+              "defaultMatch": false,
+              "canBeUsedToMatch": true,
+              "display": true,
+              "type": "boolean",
+              "readOnly": false,
+              "removed": false
+            },
+            {
+              "id": "Submitted At",
+              "displayName": "Submitted At",
+              "required": false,
+              "defaultMatch": false,
+              "canBeUsedToMatch": true,
+              "display": true,
+              "type": "string",
+              "readOnly": true,
+              "removed": true
+            }
+          ],
+          "attemptToConvertTypes": false,
+          "convertFieldsToString": false
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.airtable",
+      "typeVersion": 2.2,
+      "position": [
+        2592,
+        368
+      ],
+      "id": "e93dda44-2571-427c-8af3-fc5b60bcb4fc",
+      "name": "Create Disqualified Lead",
+      "credentials": {
+        "airtableOAuth2Api": {
+          "id": "zCJ8lTkOvB3mJG1j",
+          "name": "Airtable account 2"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "authentication": "airtableOAuth2Api",
+        "operation": "create",
+        "base": {
+          "__rl": true,
+          "value": "appyQAMCOmSIG0SpB",
+          "mode": "list",
+          "cachedResultName": "Northlane Lead Database",
+          "cachedResultUrl": "https://airtable.com/appyQAMCOmSIG0SpB"
+        },
+        "table": {
+          "__rl": true,
+          "value": "tbljxObvdeSo971cK",
+          "mode": "list",
+          "cachedResultName": "Leads",
+          "cachedResultUrl": "https://airtable.com/appyQAMCOmSIG0SpB/tbljxObvdeSo971cK"
+        },
+        "columns": {
+          "mappingMode": "defineBelow",
+          "value": {
+            "Duplicate": "={{ false }}",
+            "Name": "={{ $('Edit Fields').item.json.name }}",
+            "Email": "={{ $('Edit Fields').item.json.email }}",
+            "Company": "={{ $('Edit Fields').item.json.company }}",
+            "Message": "={{ $('Edit Fields').item.json.message }}",
+            "Source": "={{ $('Edit Fields').item.json.source }}",
+            "Lead Score": "={{ $('Basic LLM Chain').item.json.output.lead_score }}",
+            "Status": "Warm",
+            "AI Reasoning": "={{\n\"Industry: \" + $json.output.industry_guess +\n\"\\nIntent: \" + $json.output.intent_level +\n\"\\nBudget: \" + $json.output.budget_signal +\n\"\\nNext step: \" + $json.output.suggested_next_step\n}}"
+          },
+          "matchingColumns": [],
+          "schema": [
+            {
+              "id": "Name",
+              "displayName": "Name",
+              "required": false,
+              "defaultMatch": false,
+              "canBeUsedToMatch": true,
+              "display": true,
+              "type": "string",
+              "readOnly": false,
+              "removed": false
+            },
+            {
+              "id": "Email",
+              "displayName": "Email",
+              "required": false,
+              "defaultMatch": false,
+              "canBeUsedToMatch": true,
+              "display": true,
+              "type": "string",
+              "readOnly": false,
+              "removed": false
+            },
+            {
+              "id": "Company",
+              "displayName": "Company",
+              "required": false,
+              "defaultMatch": false,
+              "canBeUsedToMatch": true,
+              "display": true,
+              "type": "string",
+              "readOnly": false,
+              "removed": false
+            },
+            {
+              "id": "Message",
+              "displayName": "Message",
+              "required": false,
+              "defaultMatch": false,
+              "canBeUsedToMatch": true,
+              "display": true,
+              "type": "string",
+              "readOnly": false,
+              "removed": false
+            },
+            {
+              "id": "Source",
+              "displayName": "Source",
+              "required": false,
+              "defaultMatch": false,
+              "canBeUsedToMatch": true,
+              "display": true,
+              "type": "string",
+              "readOnly": false,
+              "removed": false
+            },
+            {
+              "id": "Lead Score",
+              "displayName": "Lead Score",
+              "required": false,
+              "defaultMatch": false,
+              "canBeUsedToMatch": true,
+              "display": true,
+              "type": "number",
+              "readOnly": false,
+              "removed": false
+            },
+            {
+              "id": "Status",
+              "displayName": "Status",
+              "required": false,
+              "defaultMatch": false,
+              "canBeUsedToMatch": true,
+              "display": true,
+              "type": "options",
+              "options": [
+                {
+                  "name": "Hot ",
+                  "value": "Hot "
+                },
+                {
+                  "name": "Warm",
+                  "value": "Warm"
+                },
+                {
+                  "name": "Disqualified",
+                  "value": "Disqualified"
+                },
+                {
+                  "name": "Manual Review",
+                  "value": "Manual Review"
+                }
+              ],
+              "readOnly": false,
+              "removed": false
+            },
+            {
+              "id": "AI Reasoning",
+              "displayName": "AI Reasoning",
+              "required": false,
+              "defaultMatch": false,
+              "canBeUsedToMatch": true,
+              "display": true,
+              "type": "string",
+              "readOnly": false,
+              "removed": false
+            },
+            {
+              "id": "Duplicate",
+              "displayName": "Duplicate",
+              "required": false,
+              "defaultMatch": false,
+              "canBeUsedToMatch": true,
+              "display": true,
+              "type": "boolean",
+              "readOnly": false,
+              "removed": false
+            },
+            {
+              "id": "Submitted At",
+              "displayName": "Submitted At",
+              "required": false,
+              "defaultMatch": false,
+              "canBeUsedToMatch": true,
+              "display": true,
+              "type": "string",
+              "readOnly": true,
+              "removed": true
+            }
+          ],
+          "attemptToConvertTypes": false,
+          "convertFieldsToString": false
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.airtable",
+      "typeVersion": 2.2,
+      "position": [
+        2592,
+        160
+      ],
+      "id": "9a90a2cd-1648-49a4-be3e-d47f521eaade",
+      "name": "Create Warm Lead",
+      "credentials": {
+        "airtableOAuth2Api": {
+          "id": "zCJ8lTkOvB3mJG1j",
+          "name": "Airtable account 2"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "authentication": "airtableOAuth2Api",
+        "operation": "create",
+        "base": {
+          "__rl": true,
+          "value": "appyQAMCOmSIG0SpB",
+          "mode": "list",
+          "cachedResultName": "Northlane Lead Database",
+          "cachedResultUrl": "https://airtable.com/appyQAMCOmSIG0SpB"
+        },
+        "table": {
+          "__rl": true,
+          "value": "tbljxObvdeSo971cK",
+          "mode": "list",
+          "cachedResultName": "Leads",
+          "cachedResultUrl": "https://airtable.com/appyQAMCOmSIG0SpB/tbljxObvdeSo971cK"
+        },
+        "columns": {
+          "mappingMode": "defineBelow",
+          "value": {
+            "Name": "={{ $('Edit Fields').item.json.name }}",
+            "Email": "={{ $('Edit Fields').item.json.email }}",
+            "Company": "={{ $('Edit Fields').item.json.company }}",
+            "Message": "={{ $('Edit Fields').item.json.message }}",
+            "Source": "={{ $('Edit Fields').item.json.source }}",
+            "Lead Score": "={{ $json.output.lead_score }}",
+            "Status": "Hot ",
+            "Duplicate": "={{ false }}",
+            "AI Reasoning": "={{\n\"Industry: \" + $json.output.industry_guess +\n\"\\nIntent: \" + $json.output.intent_level +\n\"\\nBudget: \" + $json.output.budget_signal +\n\"\\nNext step: \" + $json.output.suggested_next_step\n}}"
+          },
+          "matchingColumns": [],
+          "schema": [
+            {
+              "id": "Name",
+              "displayName": "Name",
+              "required": false,
+              "defaultMatch": false,
+              "canBeUsedToMatch": true,
+              "display": true,
+              "type": "string",
+              "readOnly": false,
+              "removed": false
+            },
+            {
+              "id": "Email",
+              "displayName": "Email",
+              "required": false,
+              "defaultMatch": false,
+              "canBeUsedToMatch": true,
+              "display": true,
+              "type": "string",
+              "readOnly": false,
+              "removed": false
+            },
+            {
+              "id": "Company",
+              "displayName": "Company",
+              "required": false,
+              "defaultMatch": false,
+              "canBeUsedToMatch": true,
+              "display": true,
+              "type": "string",
+              "readOnly": false,
+              "removed": false
+            },
+            {
+              "id": "Message",
+              "displayName": "Message",
+              "required": false,
+              "defaultMatch": false,
+              "canBeUsedToMatch": true,
+              "display": true,
+              "type": "string",
+              "readOnly": false,
+              "removed": false
+            },
+            {
+              "id": "Source",
+              "displayName": "Source",
+              "required": false,
+              "defaultMatch": false,
+              "canBeUsedToMatch": true,
+              "display": true,
+              "type": "string",
+              "readOnly": false,
+              "removed": false
+            },
+            {
+              "id": "Submitted At",
+              "displayName": "Submitted At",
+              "required": false,
+              "defaultMatch": false,
+              "canBeUsedToMatch": true,
+              "display": true,
+              "type": "dateTime",
+              "readOnly": false,
+              "removed": true
+            },
+            {
+              "id": "Lead Score",
+              "displayName": "Lead Score",
+              "required": false,
+              "defaultMatch": false,
+              "canBeUsedToMatch": true,
+              "display": true,
+              "type": "number",
+              "readOnly": false,
+              "removed": false
+            },
+            {
+              "id": "Status",
+              "displayName": "Status",
+              "required": false,
+              "defaultMatch": false,
+              "canBeUsedToMatch": true,
+              "display": true,
+              "type": "options",
+              "options": [
+                {
+                  "name": "Hot ",
+                  "value": "Hot "
+                },
+                {
+                  "name": "Warm",
+                  "value": "Warm"
+                },
+                {
+                  "name": "Disqualified",
+                  "value": "Disqualified"
+                },
+                {
+                  "name": "Manual Review",
+                  "value": "Manual Review"
+                }
+              ],
+              "readOnly": false,
+              "removed": false
+            },
+            {
+              "id": "AI Reasoning",
+              "displayName": "AI Reasoning",
+              "required": false,
+              "defaultMatch": false,
+              "canBeUsedToMatch": true,
+              "display": true,
+              "type": "string",
+              "readOnly": false,
+              "removed": false
+            },
+            {
+              "id": "Duplicate",
+              "displayName": "Duplicate",
+              "required": false,
+              "defaultMatch": false,
+              "canBeUsedToMatch": true,
+              "display": true,
+              "type": "boolean",
+              "readOnly": false,
+              "removed": false
+            }
+          ],
+          "attemptToConvertTypes": false,
+          "convertFieldsToString": false
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.airtable",
+      "typeVersion": 2.2,
+      "position": [
+        2592,
+        -64
+      ],
+      "id": "43f8a778-0267-4f38-938b-ba61d6a5e178",
+      "name": "Create Hot Lead",
+      "credentials": {
+        "airtableOAuth2Api": {
+          "id": "zCJ8lTkOvB3mJG1j",
+          "name": "Airtable account 2"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "conditions": {
+          "options": {
+            "caseSensitive": true,
+            "leftValue": "",
+            "typeValidation": "strict",
+            "version": 3
+          },
+          "conditions": [
+            {
+              "id": "e17b113e-103a-4999-a6e1-b1ebca379d6c",
+              "leftValue": "={{ $json.output.lead_score }}",
+              "rightValue": 39,
+              "operator": {
+                "type": "number",
+                "operation": "gt"
+              }
+            }
+          ],
+          "combinator": "and"
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.if",
+      "typeVersion": 2.3,
+      "position": [
+        1920,
+        272
+      ],
+      "id": "9e4e2991-41fc-4e49-ba4c-0140c83b1df0",
+      "name": "Warm Lead Check"
+    },
+    {
+      "parameters": {
+        "conditions": {
+          "options": {
+            "caseSensitive": true,
+            "leftValue": "",
+            "typeValidation": "strict",
+            "version": 3
+          },
+          "conditions": [
+            {
+              "id": "bb9e5845-034d-4d86-81c2-cde3a6068832",
+              "leftValue": "={{ $json.output.lead_score }}",
+              "rightValue": 69,
+              "operator": {
+                "type": "number",
+                "operation": "gt"
+              }
+            }
+          ],
+          "combinator": "and"
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.if",
+      "typeVersion": 2.3,
+      "position": [
+        1696,
+        160
+      ],
+      "id": "4f1f5542-940a-4f95-bbcf-67a8fa8cf65b",
+      "name": "Hot Lead Check"
+    },
+    {
+      "parameters": {
+        "conditions": {
+          "options": {
+            "caseSensitive": true,
+            "leftValue": "",
+            "typeValidation": "strict",
+            "version": 3
+          },
+          "conditions": [
+            {
+              "id": "1fd428f2-27be-498a-b7e6-581167988ef7",
+              "leftValue": "={{ $json.duplicate }}",
+              "rightValue": true,
+              "operator": {
+                "type": "boolean",
+                "operation": "equals"
+              }
+            }
+          ],
+          "combinator": "and"
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.if",
+      "typeVersion": 2.3,
+      "position": [
+        896,
+        256
+      ],
+      "id": "b3041e8f-fa7d-4cd1-b8dc-4bdb85f43aa2",
+      "name": "Duplicate Check"
+    },
+    {
+      "parameters": {
+        "jsCode": "const freeProviders = [\n  'gmail.com',\n  'yahoo.com',\n  'hotmail.com',\n  'outlook.com',\n  'icloud.com'\n];\n\nconst email = $('Edit Fields').first().json.email;\n\nconst domain = email.split('@')[1];\n\nreturn [\n  {\n    json: {\n      ...$('Edit Fields').first().json,\n      email_domain: domain,\n      business_email: !freeProviders.includes(domain),\n      domain_type: freeProviders.includes(domain)\n        ? 'free'\n        : 'business'\n    }\n  }\n];"
+      },
+      "type": "n8n-nodes-base.code",
+      "typeVersion": 2,
+      "position": [
+        1120,
+        160
+      ],
+      "id": "827a211f-ac30-466a-84df-b228e24619f1",
+      "name": "Lead Enrichment"
+    },
+    {
+      "parameters": {
+        "jsCode": "const records = $input.all();\n\nif (records.length === 0 || !records[0].json.id) {\n  return [\n    {\n      json: {\n        duplicate: false\n      }\n    }\n  ];\n}\n\nreturn [\n  {\n    json: {\n      duplicate: true,\n      recordId: records[0].json.id\n    }\n  }\n];"
+      },
+      "type": "n8n-nodes-base.code",
+      "typeVersion": 2,
+      "position": [
+        672,
+        256
+      ],
+      "id": "bd102f57-8aaa-488c-8391-555b95204464",
+      "name": "Duplicate Detection"
+    },
+    {
+      "parameters": {
+        "jsonSchemaExample": "{\n  \"industry_guess\": \"string\",\n  \"budget_signal\": \"string\",\n  \"intent_level\": \"string\",\n  \"lead_score\": 0,\n  \"disqualify_reason\": \"string\",\n  \"suggested_next_step\": \"string\"\n}"
+      },
+      "type": "@n8n/n8n-nodes-langchain.outputParserStructured",
+      "typeVersion": 1.3,
+      "position": [
+        1488,
+        384
+      ],
+      "id": "d1a23836-97cb-4805-89f1-1ed71f84f568",
+      "name": "Structured Output Parser"
+    },
+    {
+      "parameters": {
+        "promptType": "define",
+        "text": "=You are a lead qualification analyst for Northlane Digital, an agency that provides AI automation services to businesses.\n\nYour task is to analyse incoming leads and return valid JSON only.\n\nIdeal customers usually have:\n\n- 10–250 employees\n- a clear operational problem\n- a defined budget\n- an intention to purchase within the near future\n\nClassification rules:\n\nHOT\n- Score between 70 and 100\n- Clear business problem\n- Strong purchase intent\n- Budget mentioned\n\nWARM\n- Score between 40 and 69\n- Legitimate business enquiry\n- Missing information is acceptable\n- Exploring solutions\n\nDISQUALIFIED\n- Score between 0 and 39\n- Students\n- Job seekers\n- Personal projects\n- Spam enquiries\n\nImportant rules:\n\n- If the lead represents a legitimate business, never classify it as disqualified simply because information is incomplete.\n- If uncertain, classify the lead as warm.\n- Return JSON only.\n- Do not return markdown.\n- Do not include explanations outside the JSON.\n\nLead information:\n\nName: {{ $json.name }}\n\nEmail: {{ $json.email }}\n\nCompany: {{ $json.company }}\n\nMessage:\n\n{{ $json.message }}\n\nEmail domain:\n\n{{ $json.email_domain }}\n\nDomain type:\n\n{{ $json.domain_type }}\n\nReturn the result in exactly this format:\n\n{\n  \"industry_guess\": \"\",\n  \"budget_signal\": \"\",\n  \"intent_level\": \"\",\n  \"lead_score\": 0,\n  \"disqualify_reason\": \"\",\n  \"suggested_next_step\": \"\"\n}",
+        "hasOutputParser": true,
+        "batching": {}
+      },
+      "type": "@n8n/n8n-nodes-langchain.chainLlm",
+      "typeVersion": 1.9,
+      "position": [
+        1344,
+        160
+      ],
+      "id": "5bd7a627-8892-403d-9e24-bc2143d76680",
+      "name": "Basic LLM Chain"
+    },
+    {
+      "parameters": {
+        "options": {}
+      },
+      "type": "@n8n/n8n-nodes-langchain.lmChatGoogleGemini",
+      "typeVersion": 1.1,
+      "position": [
+        1360,
+        384
+      ],
+      "id": "baf388be-86e2-43da-8dc5-40201e150088",
+      "name": "Google Gemini Chat Model",
+      "credentials": {
+        "googlePalmApi": {
+          "id": "YSqbNUdzu3MGpS5O",
+          "name": "Google Gemini(PaLM) Api account"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "authentication": "airtableOAuth2Api",
+        "operation": "search",
+        "base": {
+          "__rl": true,
+          "value": "appyQAMCOmSIG0SpB",
+          "mode": "list",
+          "cachedResultName": "Northlane Lead Database",
+          "cachedResultUrl": "https://airtable.com/appyQAMCOmSIG0SpB"
+        },
+        "table": {
+          "__rl": true,
+          "value": "tbljxObvdeSo971cK",
+          "mode": "list",
+          "cachedResultName": "Leads",
+          "cachedResultUrl": "https://airtable.com/appyQAMCOmSIG0SpB/tbljxObvdeSo971cK"
+        },
+        "filterByFormula": "={Email}='{{$json.email}}'",
+        "options": {}
+      },
+      "type": "n8n-nodes-base.airtable",
+      "typeVersion": 2.2,
+      "position": [
+        448,
+        256
+      ],
+      "id": "8fd95712-3467-4ff3-9854-a6a9490c5eee",
+      "name": "Search records",
+      "alwaysOutputData": true,
+      "credentials": {
+        "airtableOAuth2Api": {
+          "id": "zCJ8lTkOvB3mJG1j",
+          "name": "Airtable account 2"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "assignments": {
+          "assignments": [
+            {
+              "id": "34a41989-95c3-4406-a48e-243ec6fc8914",
+              "name": "name",
+              "value": "={{ $json.body.name }}",
+              "type": "string"
+            },
+            {
+              "id": "14836860-076e-4f89-8850-431bb64601e1",
+              "name": "email",
+              "value": "={{ $json.body.email }}",
+              "type": "string"
+            },
+            {
+              "id": "a8266161-c46e-4bfa-8021-93d6e98365f2",
+              "name": "company",
+              "value": "={{ $json.body.company }}",
+              "type": "string"
+            },
+            {
+              "id": "c377deb0-207c-4101-9dea-7e69309e274e",
+              "name": "message",
+              "value": "={{ $json.body.message }}",
+              "type": "string"
+            },
+            {
+              "id": "f266ac85-a11a-4057-80a6-d7f91240d733",
+              "name": "source",
+              "value": "={{ $json.body.source }}",
+              "type": "string"
+            },
+            {
+              "id": "0a75e063-f7dd-44ea-8be5-19db1897aa2f",
+              "name": "submitted_at",
+              "value": "={{$now}}",
+              "type": "string"
+            }
+          ]
+        },
+        "options": {
+          "dotNotation": true
+        }
+      },
+      "type": "n8n-nodes-base.set",
+      "typeVersion": 3.4,
+      "position": [
+        224,
+        256
+      ],
+      "id": "86cd6ff7-84ec-4c01-b6be-c1ef0cd52190",
+      "name": "Edit Fields"
+    },
+    {
+      "parameters": {
+        "httpMethod": "POST",
+        "path": "lead-qualification",
+        "options": {}
+      },
+      "type": "n8n-nodes-base.webhook",
+      "typeVersion": 2.1,
+      "position": [
+        0,
+        256
+      ],
+      "id": "30052d78-173c-41ac-96a6-42f7a8b7100b",
+      "name": "Webhook",
+      "webhookId": "c842fdd4-84ee-4143-a4d1-b7d09e1ff5b5"
+    },
+    {
+      "parameters": {
+        "authentication": "oAuth2",
+        "select": "channel",
+        "channelId": {
+          "__rl": true,
+          "value": "C0BHYK0UJKF",
+          "mode": "list",
+          "cachedResultName": "general"
+        },
+        "text": "=⚠️ Duplicate lead detected  \n\nName: {{ $('Edit Fields').item.json.name }}\n\nEmail: {{ $('Edit Fields').item.json.email }}  \n\nCompany: {{ $('Edit Fields').item.json.company }}",
+        "otherOptions": {
+          "includeLinkToWorkflow": false
+        }
+      },
+      "type": "n8n-nodes-base.slack",
+      "typeVersion": 2.5,
+      "position": [
+        1120,
+        352
+      ],
+      "id": "558d6404-7ac1-42fe-a7f6-9a4aecceb4bd",
+      "name": "Send a message",
+      "webhookId": "5988b311-7b9f-45bf-9843-1d02fc4a9fa5",
+      "credentials": {
+        "slackOAuth2Api": {
+          "id": "W4xXu5yIRihN31M2",
+          "name": "Slack account"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "authentication": "oAuth2",
+        "operation": "sendAndWait",
+        "select": "channel",
+        "channelId": {
+          "__rl": true,
+          "value": "C0BM2AJ51QV",
+          "mode": "list",
+          "cachedResultName": "sales-alert"
+        },
+        "message": "=🔥 *New Hot Lead — Needs Approval*\n\n*Name:* {{ $('Edit Fields').item.json.name }}\n*Company:* {{ $('Edit Fields').item.json.company }}\n*Email:* {{ $('Edit Fields').item.json.email }}\n*Source:* {{ $('Edit Fields').item.json.source }}\n\n*Lead Score:* {{ $('Basic LLM Chain').item.json.output.lead_score }}\n*Industry:* {{ $('Basic LLM Chain').item.json.output.industry_guess }}\n*Budget Signal:* {{ $('Basic LLM Chain').item.json.output.budget_signal }}\n*Intent Level:* {{ $('Basic LLM Chain').item.json.output.intent_level }}\n\n*Original Message:*\n\"{{ $('Edit Fields').item.json.message }}\"\n\n👉 Approve to create this as a deal and notify the sales team. Reject to send it to Nurture instead.",
+        "approvalOptions": {
+          "values": {
+            "approvalType": "double"
+          }
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.slack",
+      "typeVersion": 2.5,
+      "position": [
+        2144,
+        -16
+      ],
+      "id": "19f5a4b7-b936-4b44-9f0e-8a1c12541dca",
+      "name": "Send message and wait for response",
+      "webhookId": "1faf869c-1e52-447e-a440-77fa8c8837c0",
+      "credentials": {
+        "slackOAuth2Api": {
+          "id": "W4xXu5yIRihN31M2",
+          "name": "Slack account"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "authentication": "oAuth2",
+        "operation": "sendAndWait",
+        "select": "channel",
+        "channelId": {
+          "__rl": true,
+          "value": "C0BM2AJ51QV",
+          "mode": "list",
+          "cachedResultName": "sales-alert"
+        },
+        "message": "=⚠️ *AI Recommends Disqualifying This Lead — Needs Confirmation*\n\n*Name:* {{ $('Edit Fields').item.json.name }}\n*Company:* {{ $('Edit Fields').item.json.company }}\n*Email:* {{ $('Edit Fields').item.json.email }}\n*Source:* {{ $('Edit Fields').item.json.source }}\n\n*Lead Score:* {{ $('Basic LLM Chain').item.json.output.lead_score }}\n*Industry:* {{ $('Basic LLM Chain').item.json.output.industry_guess }}\n*Budget Signal:* {{ $('Basic LLM Chain').item.json.output.budget_signal }}\n*Intent Level:* {{ $('Basic LLM Chain').item.json.output.intent_level }}\n\n*AI's Reason for Disqualifying:*\n{{ $('Basic LLM Chain').item.json.output.disqualify_reason }}\n\n*Original Message:*\n\"{{ $('Edit Fields').item.json.message }}\"\n\n👉 Approve to mark this lead closed. Reject to send it to Nurture for a second look instead of closing it.",
+        "approvalOptions": {
+          "values": {
+            "approvalType": "double"
+          }
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.slack",
+      "typeVersion": 2.5,
+      "position": [
+        2144,
+        368
+      ],
+      "id": "63546341-727b-4e00-aa55-6455b1fdbcdc",
+      "name": "Send message and wait for response1",
+      "webhookId": "ea1e7ded-8606-4834-af76-c2b710b8d6c0",
+      "credentials": {
+        "slackOAuth2Api": {
+          "id": "W4xXu5yIRihN31M2",
+          "name": "Slack account"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "conditions": {
+          "options": {
+            "caseSensitive": true,
+            "leftValue": "",
+            "typeValidation": "strict",
+            "version": 3
+          },
+          "conditions": [
+            {
+              "id": "409f85b0-d842-4a64-9a7c-14f434519146",
+              "leftValue": "={{ $json.data.approved }}",
+              "rightValue": "false",
+              "operator": {
+                "type": "boolean",
+                "operation": "true",
+                "singleValue": true
+              }
+            }
+          ],
+          "combinator": "and"
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.if",
+      "typeVersion": 2.3,
+      "position": [
+        2368,
+        320
+      ],
+      "id": "ac39fbe2-b5aa-4553-8edf-15e11737fe59",
+      "name": "If"
+    },
+    {
+      "parameters": {
+        "conditions": {
+          "options": {
+            "caseSensitive": true,
+            "leftValue": "",
+            "typeValidation": "strict",
+            "version": 3
+          },
+          "conditions": [
+            {
+              "id": "1b40d636-905a-420b-8620-55998cd28956",
+              "leftValue": "={{ $json.data.approved }}",
+              "rightValue": "",
+              "operator": {
+                "type": "boolean",
+                "operation": "true",
+                "singleValue": true
+              }
+            }
+          ],
+          "combinator": "and"
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.if",
+      "typeVersion": 2.3,
+      "position": [
+        2368,
+        -16
+      ],
+      "id": "dcd0cdde-ab95-43b6-ad99-c1e5438189a1",
+      "name": "If1"
+    },
+    {
+      "parameters": {
+        "authentication": "oAuth2",
+        "select": "channel",
+        "channelId": {
+          "__rl": true,
+          "value": "C0BM2AJ51QV",
+          "mode": "list",
+          "cachedResultName": "sales-alert"
+        },
+        "text": "=🔥 HOT LEAD APPROVED  \n\nName: {{ $('Edit Fields').item.json.name }}  \n\nCompany: {{ $('Edit Fields').item.json.company }}  \n\nScore: {{ $('Basic LLM Chain').item.json.output.lead_score }}  \n\nStatus: Added to Airtable ✅",
+        "otherOptions": {
+          "includeLinkToWorkflow": false
+        }
+      },
+      "type": "n8n-nodes-base.slack",
+      "typeVersion": 2.5,
+      "position": [
+        2800,
+        -64
+      ],
+      "id": "40c6519a-bbd7-44b0-9fcd-e6ed6a8f991f",
+      "name": "Send a message1",
+      "webhookId": "c5ae7dfd-3503-4db0-bafd-173770fd7734",
+      "credentials": {
+        "slackOAuth2Api": {
+          "id": "W4xXu5yIRihN31M2",
+          "name": "Slack account"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "authentication": "oAuth2",
+        "select": "channel",
+        "channelId": {
+          "__rl": true,
+          "value": "C0BM2AJ51QV",
+          "mode": "list",
+          "cachedResultName": "sales-alert"
+        },
+        "text": "=❌ LEAD DISQUALIFIED  \nName: {{ $('Edit Fields').item.json.name }}  \nCompany: {{ $('Edit Fields').item.json.company }}  \nScore: {{ $('Basic LLM Chain').item.json.output.lead_score }}  \nStatus: Marked as disqualified.",
+        "otherOptions": {
+          "includeLinkToWorkflow": false
+        }
+      },
+      "type": "n8n-nodes-base.slack",
+      "typeVersion": 2.5,
+      "position": [
+        2800,
+        368
+      ],
+      "id": "e1a1c772-a943-4125-9394-3aaed30ae11b",
+      "name": "Send a message2",
+      "webhookId": "f7624193-7e2e-4a81-b205-2ef5979d7f4b",
+      "credentials": {
+        "slackOAuth2Api": {
+          "id": "W4xXu5yIRihN31M2",
+          "name": "Slack account"
+        }
+      }
+    }
+  ],
+  "pinData": {},
+  "connections": {
+    "Create Warm Lead": {
+      "main": [
+        [
+          {
+            "node": "Slack Alert – Warm Lead",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Create Hot Lead": {
+      "main": [
+        [
+          {
+            "node": "Send a message1",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Warm Lead Check": {
+      "main": [
+        [
+          {
+            "node": "Create Warm Lead",
+            "type": "main",
+            "index": 0
+          }
+        ],
+        [
+          {
+            "node": "Send message and wait for response1",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Hot Lead Check": {
+      "main": [
+        [
+          {
+            "node": "Send message and wait for response",
+            "type": "main",
+            "index": 0
+          }
+        ],
+        [
+          {
+            "node": "Warm Lead Check",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Duplicate Check": {
+      "main": [
+        [
+          {
+            "node": "Send a message",
+            "type": "main",
+            "index": 0
+          }
+        ],
+        [
+          {
+            "node": "Lead Enrichment",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Lead Enrichment": {
+      "main": [
+        [
+          {
+            "node": "Basic LLM Chain",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Duplicate Detection": {
+      "main": [
+        [
+          {
+            "node": "Duplicate Check",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Basic LLM Chain": {
+      "main": [
+        [
+          {
+            "node": "Hot Lead Check",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Structured Output Parser": {
+      "ai_outputParser": [
+        [
+          {
+            "node": "Basic LLM Chain",
+            "type": "ai_outputParser",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Google Gemini Chat Model": {
+      "ai_languageModel": [
+        [
+          {
+            "node": "Basic LLM Chain",
+            "type": "ai_languageModel",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Search records": {
+      "main": [
+        [
+          {
+            "node": "Duplicate Detection",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Edit Fields": {
+      "main": [
+        [
+          {
+            "node": "Search records",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Webhook": {
+      "main": [
+        [
+          {
+            "node": "Edit Fields",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Send message and wait for response": {
+      "main": [
+        [
+          {
+            "node": "If1",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Send message and wait for response1": {
+      "main": [
+        [
+          {
+            "node": "If",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "If": {
+      "main": [
+        [
+          {
+            "node": "Create Disqualified Lead",
+            "type": "main",
+            "index": 0
+          }
+        ],
+        [
+          {
+            "node": "Create Warm Lead",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "If1": {
+      "main": [
+        [
+          {
+            "node": "Create Hot Lead",
+            "type": "main",
+            "index": 0
+          }
+        ],
+        [
+          {
+            "node": "Create Warm Lead",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Create Disqualified Lead": {
+      "main": [
+        [
+          {
+            "node": "Send a message2",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    }
+  },
+  "active": false,
+  "settings": {
+    "executionOrder": "v1",
+    "binaryMode": "separate",
+    "availableInMCP": false
+  },
+  "versionId": "96c8bd87-87f9-46e8-958b-bf4b4394f89e",
+  "meta": {
+    "templateCredsSetupCompleted": true,
+    "instanceId": "55c6ba36b541017958dde1b8c60e945296c99754fa4f09091645d1028f77732a"
+  },
+  "nodeGroups": [],
+  "id": "L8FGG0POwu8gyeBh",
+  "tags": []
+}
