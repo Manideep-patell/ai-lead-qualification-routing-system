@@ -1,0 +1,73 @@
+{
+  "name": "Northlane – Error Handler",
+  "nodes": [
+    {
+      "parameters": {},
+      "type": "n8n-nodes-base.errorTrigger",
+      "typeVersion": 1,
+      "position": [
+        0,
+        0
+      ],
+      "id": "7eba3c1a-2e3d-46e5-8aa4-c4405e35f578",
+      "name": "Error Trigger"
+    },
+    {
+      "parameters": {
+        "authentication": "oAuth2",
+        "select": "channel",
+        "channelId": {
+          "__rl": true,
+          "value": "C0BHYK0UJKF",
+          "mode": "list",
+          "cachedResultName": "general"
+        },
+        "text": "=🚨 *WORKFLOW FAILURE*  \n\n*Workflow:*  {{ $json.workflow.name }}  \n\n*Node:*  {{ $json.execution.lastNodeExecuted }}  \n\n*Error:*  {{ $json.execution.error.message }}  \n\n*Time:*  {{ $now }}",
+        "otherOptions": {}
+      },
+      "type": "n8n-nodes-base.slack",
+      "typeVersion": 2.5,
+      "position": [
+        224,
+        0
+      ],
+      "id": "26631664-54b9-40de-82fd-f77584530e5c",
+      "name": "Slack Alert – Workflow Failure",
+      "webhookId": "e7e6dd83-10e2-432a-a51d-861321c4f905",
+      "credentials": {
+        "slackOAuth2Api": {
+          "id": "W4xXu5yIRihN31M2",
+          "name": "Slack account"
+        }
+      }
+    }
+  ],
+  "pinData": {},
+  "connections": {
+    "Error Trigger": {
+      "main": [
+        [
+          {
+            "node": "Slack Alert – Workflow Failure",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    }
+  },
+  "active": true,
+  "settings": {
+    "executionOrder": "v1",
+    "binaryMode": "separate",
+    "availableInMCP": false
+  },
+  "versionId": "3e2ac3a4-2d7f-42d9-be21-d5429b99840b",
+  "meta": {
+    "templateCredsSetupCompleted": true,
+    "instanceId": "55c6ba36b541017958dde1b8c60e945296c99754fa4f09091645d1028f77732a"
+  },
+  "nodeGroups": [],
+  "id": "psZfBGJbyyzF4lfl",
+  "tags": []
+}
