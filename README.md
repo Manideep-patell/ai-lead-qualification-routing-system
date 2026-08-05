@@ -50,7 +50,7 @@ Built as a portfolio project for **Northlane Digital**, a fictional B2B marketin
 
 ## Architecture
 
-*(Insert your n8n canvas screenshot or exported diagram image here — drag it into this README on GitHub and it'll embed automatically.)*
+<img width="1221" height="651" alt="Screenshot 2026-08-01 at 1 58 27 AM" src="https://github.com/user-attachments/assets/8e992593-427f-4f01-b86e-b32350ff94aa" />
 
 ```
 Webhook → Edit Fields → Search Records → Duplicate Check
@@ -98,10 +98,6 @@ docs/
 To use: import either JSON file via n8n's **Workflows → Import from File**, then reconnect your own Airtable base, Slack workspace, and Gemini/OpenAI credentials — credentials are never included in the export.
 
 ---
-
-## Demo
-
-*(Link your demo video here once recorded.)*
 
 ---
 
