@@ -50,7 +50,7 @@ Built as a portfolio project for **Northlane Digital**, a fictional B2B marketin
 
 ## Architecture
 
-assets/workflow-overview.png
+![Workflow overview](assets/workflow-overview.png)
 
 ```
 Webhook → Edit Fields → Search Records → Duplicate Check
